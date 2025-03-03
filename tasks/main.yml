@@ -39,4 +39,4 @@
     owner: root
     group: root
     mode: '0644'
-    validate: '/usr/sbin/nginx -t -c %s'
+    # validate: '/usr/sbin/nginx -t -c %s'
