@@ -1,5 +1,5 @@
 ---
-name: ansible-role-template
+name: ansible-nginx
 channels:
   - conda-forge
 dependencies:

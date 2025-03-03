@@ -4,8 +4,39 @@
   gather_facts: false
   any_errors_fatal: true
 
+  pre_tasks:
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/defaults/'
+        extensions:
+          - 'yml'
+
   tasks:
-    - name: "Mock verification task"
+    - name: "Verify NGINX version"
+      register: nginx_version_output
       changed_when: false
-      ansible.builtin.command:
-        cmd: "true"
+      failed_when: nginx_version_output.rc != 0
+      ansible.builtin.command: nginx -v
+
+    # version is displayed as e.g. 'nginx version: nginx/1.26.3'
+    - name: "Extract NGINX version"
+      ansible.builtin.set_fact:
+        nginx_version: "{{ nginx_version_output.stderr.split('/')[1] }}"
+
+    - name: "Check expected NGINX version"
+      ansible.builtin.assert:
+        that: nginx_version.startswith(nginx_version)
+        fail_msg: "Unexpected NGINX version found: '{{ nginx_version }}'"
+
+    - name: "Gather service facts"
+      ansible.builtin.service_facts:
+
+    - name: "Assert NGINX service is running"
+      ansible.builtin.assert:
+        that: ansible_facts.services['nginx.service'].state == 'running'
+        fail_msg: "NGINX service is not running."
+
+    - name: "Assert NGINX service is enabled"
+      ansible.builtin.assert:
+        that: ansible_facts.services['nginx.service'].status == 'enabled'
+        fail_msg: "NGINX service is not enabled."

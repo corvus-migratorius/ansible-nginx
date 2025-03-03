@@ -2,4 +2,5 @@
 - name: Converge
   hosts: all
   roles:
-    - role: genlab.template
+    # usin default NGINX verison
+    - role: genlab.nginx
