@@ -16,7 +16,7 @@
       register: nginx_version_output
       changed_when: false
       failed_when: nginx_version_output.rc != 0
-      ansible.builtin.command: nginx -v
+      ansible.builtin.command: /usr/sbin/nginx -v
 
     # version is displayed as e.g. 'nginx version: nginx/1.26.3'
     - name: "Extract NGINX version"
@@ -40,3 +40,18 @@
       ansible.builtin.assert:
         that: ansible_facts.services['nginx.service'].status == 'enabled'
         fail_msg: "NGINX service is not enabled."
+
+    - name: "Get an HTTP response from the test site"
+      register: response
+      ansible.builtin.uri:
+        url: http://localhost:80
+        status_code: 200
+        return_content: true
+
+    - name: "Check the reponse correctness"
+      vars:
+        message: "{{ response.content | trim }}"
+      ansible.builtin.assert:
+        that: message == 'Hello from ansible-nginx!'
+        success_msg: "{{ message }}"
+        fail_msg: "Unexpected response from the test site: '{{ message }}'"
