@@ -21,4 +21,16 @@
   roles:
     # using default NGINX verison
     - role: genlab.nginx
+      site:
+        confname: test-var
+        content: |
+          server {
+              listen 80;
+              server_name example.com www.example.com;
+
+              location / {
+                  root /var/www/html;
+                  index index.html;
+              }
+          }
       dir_sites: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/default/site-configs/'

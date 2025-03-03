@@ -29,7 +29,18 @@
     path: /etc/nginx/conf.d/default.conf
     state: absent
 
+- name: "Deploy a single site configuration"
+  when: site is defined
+  notify: "Reload nginx"
+  ansible.builtin.copy:
+    dest: "/etc/nginx/conf.d/{{ site.confname }}.conf"
+    owner: root
+    group: root
+    mode: "0644"
+    content: "{{ site.content }}"
+
 - name: "Deploy custom site configurations"
+  when: dir_sites is defined
   with_fileglob:
     - "{{ dir_sites }}/*.conf"
   notify: "Reload nginx"
