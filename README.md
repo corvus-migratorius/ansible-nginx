@@ -1,13 +1,7 @@
-template
+ansible-nginx
 =========
 
-Template for Ansible role monorepos.
-
-⚠️ Do not forget to update:
-
-- `meta/main.yml`
-- Conda/Mamba manifests
-- this README =) including *the name at the top* and *maintainers*.
+Deploy NGINX with a minimal configuration.
 
 Requirements
 ------------
@@ -29,7 +23,7 @@ Example Playbook
 
 ```yaml
 roles:
-    - role: genlab.template
+    - role: genlab.nginx
 ```
 
 License
